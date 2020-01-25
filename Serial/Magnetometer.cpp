@@ -40,9 +40,11 @@ void get_raw_radings(Magnetometer* magnetometer) {
   
   magnetometer->time_taken = millis();
 
+
   snprintf(magnetometer->report, sizeof(magnetometer->report), "%c,%6d,%6d,%6d,%6d\r\n",
       magnetometer->id,magnetometer->x,magnetometer->y,magnetometer->z,magnetometer->time_taken);
 
-  //Serial.println(magnetometer->report);
+
+  Serial.println(sizeof(magnetometer->report));
     
 }

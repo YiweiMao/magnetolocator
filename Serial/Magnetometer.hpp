@@ -1,4 +1,4 @@
-#include <LIS3MDL.h>
+#include "LIS3MDLmag.h"
 #include <time.h>
 
 
@@ -8,8 +8,7 @@ typedef struct Magnetometer {
   int magnetometer_pin;
   int x, y, z;
   unsigned long time_taken;
-  char report[100];
-  
+  char report[32];
   
   
 }Magnetometer;

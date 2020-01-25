@@ -14,7 +14,7 @@ reading of 1292 corresponds to 1292 / 6842 = 0.1888 gauss.
 
 #include <Wire.h>
 #include <time.h> 
-#include <LIS3MDL.h>
+#include "LIS3MDLmag.h"
 
 #include "Magnetometer.hpp"
 
@@ -79,7 +79,7 @@ void read_all_data() {
 }
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Wire.begin();
   init_magnetomter(&mag_1,MAG_1_PIN,'1'); 
   init_magnetomter(&mag_2,MAG_2_PIN,'2'); 
