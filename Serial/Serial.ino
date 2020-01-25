@@ -13,12 +13,23 @@ reading of 1292 corresponds to 1292 / 6842 = 0.1888 gauss.
 */
 
 #include <Wire.h>
+#include <time.h> 
 #include <LIS3MDL.h>
 
 void Timer1SetUp();
 
-LIS3MDL mag_1;
-LIS3MDL mag_2;
+typedef struct Magnetometer {
+  LIS3MDL mag;
+  int magnetometer_pin;
+  int x, y, z;
+  time_t time_taken;
+  
+  
+  
+}Magnetometer;
+
+Magnetometer mag_1;
+Magnetometer mag_2;
 
 //on I2C multiplexter
 const int MAG_1_PIN = 7;
@@ -167,6 +178,6 @@ ISR(TIMER1_COMPA_vect){
 
   counter_1++;
   counter_2++;
-  counter_3++
+  counter_3++;
 
 }
