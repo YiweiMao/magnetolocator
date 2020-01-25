@@ -16,17 +16,10 @@ reading of 1292 corresponds to 1292 / 6842 = 0.1888 gauss.
 #include <time.h> 
 #include <LIS3MDL.h>
 
+#include "Magnetometer.hpp"
+
 void Timer1SetUp();
 
-typedef struct Magnetometer {
-  LIS3MDL mag;
-  int magnetometer_pin;
-  int x, y, z;
-  time_t time_taken;
-  
-  
-  
-}Magnetometer;
 
 Magnetometer mag_1;
 Magnetometer mag_2;
@@ -59,13 +52,6 @@ const int counter_3_max = 13;
 
 char report[100];
 
-void TCA9548A_select_pin(uint8_t bus)
-{
-  Wire.beginTransmission(0x70);  // TCA9548A address is 0x70
-  Wire.write(1 << bus);          // send byte to select bus
-  Wire.endTransmission();
-}
-
 void Timer1SetUp() {
   cli();//stop interrupts
   TCCR1A = 0;// set entire TCCR1A register to 0
@@ -84,72 +70,28 @@ void Timer1SetUp() {
 }
 
 void read_all_data() {
-  TCA9548A_select_pin(MAG_1_PIN);
-    mag_1.read();
-  
-    int x1,y1,z1,x2,y2,z2;
-  
-    x1 = mag_1.m.x;
-    y1 = mag_1.m.y;
-    z1 = mag_1.m.z;
-  
-    TCA9548A_select_pin(MAG_2_PIN);
-    mag_2.read();
-  
-    x2 = mag_2.m.x;
-    y2 = mag_2.m.y;
-    z2 = mag_2.m.z;
+  get_raw_radings(&mag_1);
 
-    snprintf(report, sizeof(report), "M1: %6d M2: %6d ",
-      x1+y1+z1,x2+y2+z2);
- 
-//    snprintf(report, sizeof(report), "M1: %6d %6d %6d M2: %6d %6d %6d",
-//      x1,y1,z1,x2,y2,z2);
-    Serial.println(report);
+  Serial.write(mag_1.report);
+  
+  get_raw_radings(&mag_2);
+  Serial.write(mag_2.report);
 }
 
 void setup() {
   Serial.begin(9600);
   Wire.begin();
-  TCA9548A_select_pin(MAG_1_PIN);
-
-  if (!mag_1.init())
-  {
-    Serial.println("Failed to detect and initialize magnetometer!");
-    while (1);
-  }
-
-  mag_1.enableDefault();
-
-   TCA9548A_select_pin(MAG_2_PIN);
-  if (!mag_2.init())
-  {
-    Serial.println("Failed to detect and initialize magnetometer!");
-    while (1);
-  }
-
-  mag_2.enableDefault();
+  init_magnetomter(&mag_1,MAG_1_PIN,'1'); 
+  init_magnetomter(&mag_2,MAG_2_PIN,'2'); 
   pinMode(ELEC1_PIN, OUTPUT);
-  pinMode(ELEC2_PIN, OUTPUT); 
+  pinMode(ELEC2_PIN, OUTPUT);
+
+  Timer1SetUp();
 }
 
 void loop()
 {
-  for(int i = 0; i < 10; i++){
     read_all_data();
-    delay(100);
-  }
-  Serial.println("Written High");
-  digitalWrite(ELEC1_PIN, HIGH);
-  //digitalWrite(ELEC2_PIN, HIGH);
-  delay(100);
-  for(int i = 0; i < 10; i++){
-    read_all_data();
-    delay(100);
-  }
-  Serial.println("Written Low");
-    digitalWrite(ELEC1_PIN, LOW);
-//  //digitalWrite(ELEC2_PIN, LOW);
 }
 
 //Interrupt sub routine at 1kHz - 1000x every second
