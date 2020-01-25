@@ -72,10 +72,12 @@ void Timer1SetUp() {
 void read_all_data() {
   get_raw_radings(&mag_1);
 
-  Serial.write(mag_1.report);
   
   get_raw_radings(&mag_2);
-  Serial.write(mag_2.report);
+
+  char buf[256];
+  snprintf(buf, sizeof(buf), "%s%s", mag_1.report, mag_2.report);
+  Serial.write(buf);
 }
 
 void setup() {
