@@ -8,12 +8,7 @@ Magnetometer::Magnetometer(int pin):
     magnitude(0),
     magnetometer_pin{pin} 
 {
-    select_current_pin(pin);
-    if(device.init()) {
-        Serial.println("Failed to detect and initialize magnetometer!");
-    }
-
-    device.enableHighPerformaceMode();
+    
 }
 
 void Magnetometer::select_current_pin(uint8_t pin) {
@@ -26,5 +21,17 @@ void Magnetometer::get_raw_readings() {
     select_current_pin(magnetometer_pin);
     device.read();
     time_taken = millis();
-    magnitude = sqrt(device.m.x*device.m.x + device.m.y*device.m.y + device.m.z*device.m.z);
+    float x = static_cast<float>(device.m.x);
+    float y = static_cast<float>(device.m.y);
+    float z = static_cast<float>(device.m.z);
+    magnitude = sqrt(x*x + y*y + z*z);
+}
+
+void Magnetometer::init() {
+    select_current_pin(magnetometer_pin);
+    if(!device.init()) {
+        Serial.println("Failed to detect and initialize magnetometer!");
+    }
+    device.enableHighPerformaceMode();
+    
 }

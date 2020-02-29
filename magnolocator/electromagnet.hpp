@@ -26,7 +26,7 @@ ElectroMagnet::ElectroMagnet(int pin, int max_toggle_count) :
     count(0),
     MAX_TOGGLE_COUNT(max_toggle_count)
 {
-	pinMode(digital_pin, OUTPUT);
+    pinMode(digital_pin, OUTPUT);
 	digitalWrite(digital_pin, LOW);
 }
 

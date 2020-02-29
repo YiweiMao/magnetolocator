@@ -6,6 +6,7 @@ public:
     Magnetometer(int pin);
     
     void get_raw_readings();
+    void init();
     void get_data();
     unsigned long time_taken;
     float magnitude;
