@@ -36,8 +36,8 @@ void Magnetometer::get_raw_readings() {
 
   magnitude = std::sqrt(x*x + y*y + z*z); 
 
-  snprintf(report sizeof(report), "%c,%6d,%6d\r\n",
-    magnitude,time_taken);
+  snprintf(report, sizeof(report), "%c,%6lf,%6d\r\n",
+    magnetometer_pin, magnitude,time_taken);
 
 
 

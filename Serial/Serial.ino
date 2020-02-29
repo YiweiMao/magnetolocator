@@ -16,6 +16,8 @@ reading of 1292 corresponds to 1292 / 6842 = 0.1888 gauss.
 #include <time.h> 
 #include "LIS3MDLmag.h"
 
+#include <string>
+
 #include "Magnetometer.hpp"
 #include "electromagnet.hpp"
 
@@ -37,14 +39,19 @@ constexpr int ELEC1_PIN = 2;
 constexpr int ELEC2_PIN = 3;
 constexpr int ELEC3_PIN = 4;
 
-//40Hz
-constexpr int electro_mag_1_counter_max = 25;
+//83
+constexpr int electro_mag_1_counter_max = 12;
+//100Hz
+constexpr int electro_mag_2_counter_max = 10;
 
-//17
-constexpr int electro_mag_2_counter_max = 17;
+//125 Hz
+constexpr int electro_mag_3_counter_max = 8;
 
-//12.5
-constexpr int electro_mag_3_counter_max = 13;
+//143
+constexpr int electro_mag_4_counter_max = 7;
+
+//167
+constexpr int electro_mag_5_counter_max = 6;
 
 
 
@@ -75,14 +82,17 @@ void Timer1SetUp() {
 }
 
 void read_all_data() {
+
+  static std::string buffer;
+  buffer = "";
   
   for (const auto& magnetometer : magnetometer_vector) {
     magnetometer.get_raw_readings();
+
+    buffer += magnetometer.report;
   }
 
-  char buf[256];
-  snprintf(buf, sizeof(buf), "%s%s", magnetometer.report, magnetometer.report);
-  Serial.write(buf);
+  Serial.write(buffer.c_str());
 }
 
 void setup() {
