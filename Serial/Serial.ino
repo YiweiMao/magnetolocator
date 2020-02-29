@@ -25,29 +25,29 @@ Magnetometer mag_1;
 Magnetometer mag_2;
 
 //on I2C multiplexter
-const int MAG_1_PIN = 7;
-const int MAG_2_PIN = 5;
+constexpr int MAG_1_PIN = 7;
+constexpr int MAG_2_PIN = 5;
 
 //digital output from the arduino
-const int ELEC1_PIN = 2;
-const int ELEC2_PIN = 3;
+constexpr int ELEC1_PIN = 2;
+constexpr int ELEC2_PIN = 3;
 
-boolean electro_mag_1_state = 0;
-boolean electro_mag_2_state = 0;
-boolean electro_mag_3_state = 0;
+// boolean electro_mag_1_state = 0;
+// boolean electro_mag_2_state = 0;
+// boolean electro_mag_3_state = 0;
 
 int counter_1 = 0;
 int counter_2 = 0;
 int counter_3 = 0;
 
 //40Hz
-const int counter_1_max= 25;
+constexpr int counter_1_max= 25;
 
 //17
-const int counter_2_max = 17;
+constexpr int counter_2_max = 17;
 
 //12.5
-const int counter_3_max = 13;
+constexpr int counter_3_max = 13;
 
 
 char report[100];
@@ -100,25 +100,25 @@ void loop()
 ISR(TIMER1_COMPA_vect){
 
   if (counter_1 == counter_1_max) {
-    electro_mag_1_state != electro_mag_1_state;
-    digitalWrite(ELEC1_PIN, electro_mag_1_state);
+    mag_1.state != mag_1.state;
+    digitalWrite(mag_1.magnetometer_pin, mag_1.state);
     counter_1 = 0;
 
   }
 
   if (counter_2 == counter_2_max) {
-    electro_mag_2_state != electro_mag_2_state;
-    digitalWrite(ELEC2_PIN, electro_mag_2_state);
+    mag_2.state != mag_2.state;
+    digitalWrite(mag_2.magnetometer_pin, mag_2.state);
     counter_2 = 0;
     
   }
 
-  if (counter_3 == counter_3_max) {
-    electro_mag_3_state != electro_mag_3_state;
-    digitalWrite(ELEC1_PIN, electro_mag_3_state);
-    counter_3 = 0;
+  // if (counter_3 == counter_3_max) {
+  //   electro_mag_3_state != electro_mag_3_state;
+  //   digitalWrite(ELEC1_PIN, electro_mag_3_state);
+  //   counter_3 = 0;
     
-  }
+  // }
 
   counter_1++;
   counter_2++;

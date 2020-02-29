@@ -16,6 +16,7 @@ void init_magnetomter(Magnetometer* magnetometer, int pin, char id) {
   magnetometer->x = 0;
   magnetometer->y = 0;
   magnetometer->z = 0;
+  magnetometer->state = 0;
   magnetometer->magnetometer_pin = pin;
   magnetometer->id = id;
   
