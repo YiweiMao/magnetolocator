@@ -17,37 +17,42 @@ reading of 1292 corresponds to 1292 / 6842 = 0.1888 gauss.
 #include "LIS3MDLmag.h"
 
 #include "Magnetometer.hpp"
+#include "electromagnet.hpp"
 
 void Timer1SetUp();
 
 
-Magnetometer mag_1;
-Magnetometer mag_2;
 
 //on I2C multiplexter
 constexpr int MAG_1_PIN = 7;
 constexpr int MAG_2_PIN = 5;
 
+std::array<Magnetometer, 2> magnetometer_vector = {
+  Magnetometer mag_1(MAG_1_PIN),
+  Magnetometer mag_2(MAG_2_PIN)
+}
+
 //digital output from the arduino
 constexpr int ELEC1_PIN = 2;
 constexpr int ELEC2_PIN = 3;
-
-// boolean electro_mag_1_state = 0;
-// boolean electro_mag_2_state = 0;
-// boolean electro_mag_3_state = 0;
-
-int counter_1 = 0;
-int counter_2 = 0;
-int counter_3 = 0;
+constexpr int ELEC3_PIN = 4;
 
 //40Hz
-constexpr int counter_1_max= 25;
+constexpr int electro_mag_1_counter_max = 25;
 
 //17
-constexpr int counter_2_max = 17;
+constexpr int electro_mag_2_counter_max = 17;
 
 //12.5
-constexpr int counter_3_max = 13;
+constexpr int electro_mag_3_counter_max = 13;
+
+
+
+std::array<ElectroMagnet, 3> electo_mag_vector = {
+  ElectroMagnet electro_mag_1(MAG_1_PIN, electro_mag_1_counter_max),
+  ElectroMagnet electro_mag_2(MAG_2_PIN, electro_mag_2_counter_max),
+  ElectroMagnet electro_mag_3(MAG_3_PIN, electro_mag_3_counter_max)
+}
 
 
 char report[100];
@@ -70,24 +75,21 @@ void Timer1SetUp() {
 }
 
 void read_all_data() {
-  get_raw_radings(&mag_1);
-
   
-  get_raw_radings(&mag_2);
+  for (const auto& magnetometer : magnetometer_vector) {
+    magnetometer.get_raw_readings();
+  }
 
   char buf[256];
-  snprintf(buf, sizeof(buf), "%s%s", mag_1.report, mag_2.report);
+  snprintf(buf, sizeof(buf), "%s%s", magnetometer.report, magnetometer.report);
   Serial.write(buf);
 }
 
 void setup() {
   Serial.begin(115200);
   Wire.begin();
-  init_magnetomter(&mag_1,MAG_1_PIN,'1'); 
-  init_magnetomter(&mag_2,MAG_2_PIN,'2'); 
-  pinMode(ELEC1_PIN, OUTPUT);
-  pinMode(ELEC2_PIN, OUTPUT);
 
+  
   Timer1SetUp();
 }
 
@@ -99,29 +101,8 @@ void loop()
 //Interrupt sub routine at 1kHz - 1000x every second
 ISR(TIMER1_COMPA_vect){
 
-  if (counter_1 == counter_1_max) {
-    mag_1.state != mag_1.state;
-    digitalWrite(mag_1.magnetometer_pin, mag_1.state);
-    counter_1 = 0;
-
+  for (const auto& electro_mag : electo_mag_vector) {
+    electro_mag.toggle();
   }
-
-  if (counter_2 == counter_2_max) {
-    mag_2.state != mag_2.state;
-    digitalWrite(mag_2.magnetometer_pin, mag_2.state);
-    counter_2 = 0;
-    
-  }
-
-  // if (counter_3 == counter_3_max) {
-  //   electro_mag_3_state != electro_mag_3_state;
-  //   digitalWrite(ELEC1_PIN, electro_mag_3_state);
-  //   counter_3 = 0;
-    
-  // }
-
-  counter_1++;
-  counter_2++;
-  counter_3++;
 
 }
