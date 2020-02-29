@@ -15,7 +15,6 @@ reading of 1292 corresponds to 1292 / 6842 = 0.1888 gauss.
 #include <Wire.h>
 #include <time.h> 
 #include "LIS3MDLmag.h"
-
 #include <string.h>
 
 #include "Magnetometer.hpp"
@@ -23,14 +22,30 @@ reading of 1292 corresponds to 1292 / 6842 = 0.1888 gauss.
 
 void Timer1SetUp();
 
+#pragma pack(push, 1)
+typedef struct DataPacket {
+    uint32_t time_taken;
+    float magnitude;
+    uint8_t magnetometer_pin;
+} DataPacket;
+#pragma pack(pop)
+
+void send_data(DataPacket& x){
+    byte * data = (byte *) &x;
+    Serial.write(data, sizeof(x));
+}
+
+constexpr int NUMBER_OF_MAG = 3;
+
 //on I2C multiplexter
 constexpr int MAG_1_PIN = 7;
 constexpr int MAG_2_PIN = 5;
+constexpr int MAG_3_PIN = 3;
 
-std::array<Magnetometer, 2> magnetometer_vector = {
-  Magnetometer mag_1(MAG_1_PIN),
-  Magnetometer mag_2(MAG_2_PIN)
-}
+Magnetometer magnetometer_vector[] = {
+  Magnetometer(MAG_1_PIN),
+  Magnetometer(MAG_2_PIN)
+};
 
 //digital output from the arduino
 constexpr int ELEC1_PIN = 2;
@@ -52,11 +67,11 @@ constexpr int electro_mag_4_counter_max = 7;
 //167
 constexpr int electro_mag_5_counter_max = 6;
 
-std::array<ElectroMagnet, 3> electo_mag_vector = {
-  ElectroMagnet electro_mag_1(MAG_1_PIN, electro_mag_1_counter_max),
-  ElectroMagnet electro_mag_2(MAG_2_PIN, electro_mag_2_counter_max),
-  ElectroMagnet electro_mag_3(MAG_3_PIN, electro_mag_3_counter_max)
-}
+ElectroMagnet electo_mag_vector[] = {
+  ElectroMagnet(MAG_1_PIN, electro_mag_1_counter_max),
+  ElectroMagnet(MAG_2_PIN, electro_mag_2_counter_max),
+  ElectroMagnet(MAG_3_PIN, electro_mag_3_counter_max)
+};
 
 void Timer1SetUp() {
   cli();//stop interrupts
@@ -75,17 +90,18 @@ void Timer1SetUp() {
   sei(); //turn interrupts back on
 }
 
+
 void read_all_data() {
-
-  static std::string buffer;
-  buffer = "";
-  
-  for (const auto& magnetometer : magnetometer_vector) {
-    magnetometer.get_raw_readings();
-    buffer += magnetometer.report;
-  }
-
-  Serial.write(buffer.c_str());
+    static DataPacket data_packet;
+    
+    for (int i=0; i<NUMBER_OF_MAG; i++) {
+        magnetometer_vector[i].get_raw_readings();
+        data_packet.time_taken = magnetometer_vector[i].time_taken;
+        data_packet.magnitude = magnetometer_vector[i].magnitude;
+        data_packet.magnetometer_pin = magnetometer_vector[i].magnetometer_pin;
+        
+        send_data(data_packet);
+    }
 }
 
 void setup() {

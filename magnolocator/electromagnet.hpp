@@ -18,7 +18,7 @@ private:
     int count;
 
     const int MAX_TOGGLE_COUNT;
-}
+};
 
 ElectroMagnet::ElectroMagnet(int pin, int max_toggle_count) :
     digital_pin(pin),
@@ -31,11 +31,11 @@ ElectroMagnet::ElectroMagnet(int pin, int max_toggle_count) :
 }
 
 
-ElectroMagnet::toggle() {
+void ElectroMagnet::toggle() {
 
     if (count == MAX_TOGGLE_COUNT) {
         state = !state;
-        digitalWrite(digital, state);
+        digitalWrite(digital_pin, state);
         count = 0;
     }
 
