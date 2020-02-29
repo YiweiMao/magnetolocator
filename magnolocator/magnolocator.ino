@@ -16,7 +16,7 @@ reading of 1292 corresponds to 1292 / 6842 = 0.1888 gauss.
 #include <time.h> 
 #include "LIS3MDLmag.h"
 
-#include <string>
+#include <string.h>
 
 #include "Magnetometer.hpp"
 #include "electromagnet.hpp"
@@ -41,6 +41,7 @@ constexpr int ELEC3_PIN = 4;
 
 //83
 constexpr int electro_mag_1_counter_max = 12;
+
 //100Hz
 constexpr int electro_mag_2_counter_max = 10;
 
