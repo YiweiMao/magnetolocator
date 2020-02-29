@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 
-
 class ElectroMagnet {
 
 public:
@@ -18,35 +17,29 @@ private:
     bool state;
     int count;
 
-    const int _max_toggle_count;
+    const int MAX_TOGGLE_COUNT;
 }
-
-
 
 ElectroMagnet::ElectroMagnet(int pin, int max_toggle_count) :
     digital_pin(pin),
     state(false),
     count(0),
-    _max_toggle_count(max_toggle_count)
-
-    {
-        pinMode(digital_pin, OUTPUT);
-        digitalWrite(digital_pin, LOW);
-    }
+    MAX_TOGGLE_COUNT(max_toggle_count)
+{
+	pinMode(digital_pin, OUTPUT);
+	digitalWrite(digital_pin, LOW);
+}
 
 
 ElectroMagnet::toggle() {
 
-    if (count == _max_toggle_count) {
+    if (count == MAX_TOGGLE_COUNT) {
         state = !state;
         digitalWrite(digital, state);
         count = 0;
     }
 
     ++count;
-
-
 }
-
 
 #endif

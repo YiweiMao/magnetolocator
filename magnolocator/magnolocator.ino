@@ -23,8 +23,6 @@ reading of 1292 corresponds to 1292 / 6842 = 0.1888 gauss.
 
 void Timer1SetUp();
 
-
-
 //on I2C multiplexter
 constexpr int MAG_1_PIN = 7;
 constexpr int MAG_2_PIN = 5;
@@ -54,16 +52,11 @@ constexpr int electro_mag_4_counter_max = 7;
 //167
 constexpr int electro_mag_5_counter_max = 6;
 
-
-
 std::array<ElectroMagnet, 3> electo_mag_vector = {
   ElectroMagnet electro_mag_1(MAG_1_PIN, electro_mag_1_counter_max),
   ElectroMagnet electro_mag_2(MAG_2_PIN, electro_mag_2_counter_max),
   ElectroMagnet electro_mag_3(MAG_3_PIN, electro_mag_3_counter_max)
 }
-
-
-char report[100];
 
 void Timer1SetUp() {
   cli();//stop interrupts
@@ -89,7 +82,6 @@ void read_all_data() {
   
   for (const auto& magnetometer : magnetometer_vector) {
     magnetometer.get_raw_readings();
-
     buffer += magnetometer.report;
   }
 
@@ -100,7 +92,6 @@ void setup() {
   Serial.begin(115200);
   Wire.begin();
 
-  
   Timer1SetUp();
 }
 
@@ -110,10 +101,8 @@ void loop()
 }
 
 //Interrupt sub routine at 1kHz - 1000x every second
-ISR(TIMER1_COMPA_vect){
-
-  for (const auto& electro_mag : electo_mag_vector) {
+ISR(TIMER1_COMPA_vect)
+{
+  for (const auto& electro_mag : electo_mag_vector)
     electro_mag.toggle();
-  }
-
 }
