@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name glove)(type Legacy)(uri ${KIPRJMOD}/glove.lib)(options "")(descr ""))
+  (lib (name glove_pcb-rescue)(type Legacy)(uri ${KIPRJMOD}/glove_pcb-rescue.lib)(options "")(descr ""))
+)
